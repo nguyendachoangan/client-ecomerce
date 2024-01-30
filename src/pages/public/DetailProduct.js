@@ -10,7 +10,6 @@ import {
   CustomSlider,
 } from "../../components";
 import Slider from "react-slick";
-import ReactImageMagnify from "react-image-magnify";
 import {
   formatMoney,
   fotmatPrice,
@@ -25,6 +24,7 @@ import { getCurrent } from "../../store/user/asyncActions";
 import Swal from "sweetalert2";
 import path from "../../ultils/path";
 import withBaseComponent from "../../hocs/withBaseComponents";
+
 const settings = {
   dots: false,
   infinite: true,
@@ -61,7 +61,9 @@ const DetailProduct = ({ isQuickView, data, location, dispatch, navigate }) => {
       setCategory(params.category);
     }
   }, [data, params]);
+
   const [varriant, setVarriant] = useState(null);
+
   const fetchProductData = async () => {
     const response = await apiGetProduct(pid);
     if (response.success) {
@@ -94,6 +96,7 @@ const DetailProduct = ({ isQuickView, data, location, dispatch, navigate }) => {
     const response = await apiGetProducts({ category });
     if (response.success) setRelatedProducts(response.products);
   };
+
   useEffect(() => {
     if (pid) fetchProductData();
   }, [update]);
@@ -125,6 +128,7 @@ const DetailProduct = ({ isQuickView, data, location, dispatch, navigate }) => {
     },
     [quantity]
   );
+
   const handleChangeQuantity = useCallback(
     (flag) => {
       if (flag === "minus" && quantity === 1) return;
@@ -138,6 +142,7 @@ const DetailProduct = ({ isQuickView, data, location, dispatch, navigate }) => {
     e.stopPropagation();
     setCurrentImage(index);
   };
+
   const handleAddToCart = async () => {
     if (!current)
       return Swal.fire({
@@ -171,6 +176,7 @@ const DetailProduct = ({ isQuickView, data, location, dispatch, navigate }) => {
       toast.error(response.mes);
     }
   };
+
   return (
     <div className={clsx("w-full")}>
       {!isQuickView && (
@@ -199,25 +205,13 @@ const DetailProduct = ({ isQuickView, data, location, dispatch, navigate }) => {
           className={clsx("flex flex-col gap-4 w-2/5", isQuickView && "w-1/2")}
         >
           <div className="w-[406px] h-[406px] border flex items-center overflow-hidden">
-            <ReactImageMagnify
-              {...{
-                smallImage: {
-                  alt: "",
-                  isFluidWidth: true,
-                  src: currentProduct.thumb || currentImage,
-                },
-                largeImage: {
-                  src: currentProduct.thumb || currentImage,
-                  width: 1800,
-                  height: 1800,
-                },
-                enlargedImageContainerDimensions: {
-                  width: "100%",
-                  height: "100%",
-                },
-                enlargedImagePosition: "over",
-              }}
-            />
+            {currentImage && (
+              <img
+                src={currentImage}
+                alt={currentProduct.title || product?.title}
+                className="w-full h-full object-contain"
+              />
+            )}
           </div>
           <div className="w-[458px]">
             <Slider
@@ -368,4 +362,5 @@ const DetailProduct = ({ isQuickView, data, location, dispatch, navigate }) => {
     </div>
   );
 };
+
 export default withBaseComponent(DetailProduct);
